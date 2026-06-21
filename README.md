@@ -340,15 +340,25 @@ DOCKER_PASSWORD
 * Persistent storage classes
 * Cloud deployment (EKS, GKE, AKS)
 
-## Screenshots
+## Author
 
-Add screenshots of:
+**Krishna (Krishna8167)**
 
-* Grafana Dashboard
-* Prometheus Targets
-* Kafka Topic Activity
-* Kubernetes Pods
-* PostgreSQL Records
+Computer Science Engineer specializing in Cloud, DevOps, Backend Systems, and Distributed Systems.
+
+GitHub: https://github.com/Krishna8167
+
+## Maintainer
+
+This project is designed, developed, and maintained by **Krishna8167**.
+
+For questions, suggestions, or contributions, please open an issue or submit a pull request.
+
+---
+
+© 2026 Krishna8167. All rights reserved.
+
+
 
 ---
 
