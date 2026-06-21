@@ -1,0 +1,22 @@
+{
+  "title": "ETL Log Processing",
+  "uid": "etl-logs",
+  "panels": [
+    {
+      "title": "Logs Processed (total)",
+      "targets": [ { "expr": "logs_processed_total", "legendFormat": "Processed" } ],
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 }
+    },
+    {
+      "title": "Logs Failed (total)",
+      "targets": [ { "expr": "logs_failed_total", "legendFormat": "Failed" } ],
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 }
+    },
+    {
+      "title": "Processing Rate (logs/sec)",
+      "targets": [ { "expr": "rate(logs_processed_total[1m])", "legendFormat": "Processed/s" } ],
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 }
+    }
+  ],
+  "schemaVersion": 30
+}

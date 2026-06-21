@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: etl
+data:
+  datasource.yml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus:9090
+        access: proxy
+        isDefault: true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: etl
+data:
+  dashboard.yml: |
+    apiVersion: 1
+    providers:
+      - name: 'ETL Dashboard'
+        folder: ''
+        type: file
+        options:
+          path: /etc/grafana/provisioning/dashboards
+  etl-dashboard.json: |
+    {
+      "title": "ETL Log Processing",
+      "uid": "etl-logs",
+      "panels": [
+        {
+          "title": "Logs Processed (total)",
+          "targets": [ { "expr": "logs_processed_total", "legendFormat": "Processed" } ],
+          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 }
+        },
+        {
+          "title": "Logs Failed (total)",
+          "targets": [ { "expr": "logs_failed_total", "legendFormat": "Failed" } ],
+          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 }
+        },
+        {
+          "title": "Processing Rate (logs/sec)",
+          "targets": [ { "expr": "rate(logs_processed_total[1m])", "legendFormat": "Processed/s" } ],
+          "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 }
+        }
+      ],
+      "schemaVersion": 30
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: etl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana:latest
+          env:
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              value: admin
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: datasources
+              mountPath: /etc/grafana/provisioning/datasources
+            - name: dashboards
+              mountPath: /etc/grafana/provisioning/dashboards
+      volumes:
+        - name: datasources
+          configMap:
+            name: grafana-datasources
+        - name: dashboards
+          configMap:
+            name: grafana-dashboards
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: etl
+spec:
+  selector:
+    app: grafana
+  ports:
+    - port: 3000
+      targetPort: 3000
+  type: NodePort

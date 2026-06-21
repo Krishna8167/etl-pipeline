@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer
+  namespace: etl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer
+  template:
+    metadata:
+      labels:
+        app: consumer
+    spec:
+      containers:
+        - name: consumer
+          image: etl-consumer:latest   # replace with your image name
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: KAFKA_BROKER
+              value: kafka:9092
+            - name: PG_CONN
+              value: postgres://postgres:postgres@postgres:5432/etl?sslmode=disable
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consumer
+  namespace: etl
+spec:
+  selector:
+    app: consumer
+  ports:
+    - port: 8080
+      targetPort: 8080
